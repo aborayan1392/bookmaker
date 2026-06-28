@@ -1,0 +1,1022 @@
+/* ============================================
+   صانع الكتب الإلكترونية - التصميم المتجاوب
+   Responsive Design for Mobile Devices
+   ============================================ */
+
+/* ============================================
+   متغيرات للموبايل
+   ============================================ */
+:root {
+    --mobile-header-height: 60px;
+    --mobile-nav-height: 65px;
+    --touch-target-min: 44px;
+    --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ============================================
+   إخفاء عناصر الموبايل على الديسكتوب
+   ============================================ */
+@media (min-width: 769px) {
+    .mobile-menu-toggle,
+    .mobile-nav-overlay,
+    .mobile-sidebar,
+    .mobile-bottom-nav,
+    .mobile-editor-toolbar {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+}
+
+/* ============================================
+   قائمة الهمبرغر للموبايل
+   ============================================ */
+.mobile-menu-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 1001;
+}
+
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+}
+
+.hamburger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    transition: var(--transition-fast);
+}
+
+.mobile-menu-toggle.active .hamburger span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.mobile-menu-toggle.active .hamburger span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active .hamburger span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ============================================
+   تراكب القائمة الجانبية
+   ============================================ */
+.mobile-nav-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity var(--transition-normal), visibility var(--transition-normal);
+}
+
+.mobile-nav-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* ============================================
+   القائمة الجانبية للموبايل
+   ============================================ */
+.mobile-sidebar {
+    position: fixed;
+    top: 0;
+    right: -280px;
+    width: 280px;
+    height: 100%;
+    background: var(--bg-primary);
+    box-shadow: var(--shadow-xl);
+    z-index: 1000;
+    transition: right var(--transition-normal);
+    overflow-y: auto;
+    padding-bottom: calc(var(--mobile-nav-height) + var(--safe-area-inset-bottom));
+    visibility: hidden;
+}
+
+.mobile-sidebar.active {
+    right: 0;
+    visibility: visible;
+}
+
+.mobile-sidebar-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mobile-sidebar-close {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-sidebar-nav {
+    padding: var(--spacing-md);
+}
+
+.mobile-nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition-fast);
+    min-height: var(--touch-target-min);
+}
+
+.mobile-nav-item:hover,
+.mobile-nav-item.active {
+    background: var(--primary-light);
+    color: var(--primary-color);
+}
+
+.mobile-nav-item .nav-icon {
+    font-size: 1.25rem;
+}
+
+/* ============================================
+   شريط التنقل السفلي للموبايل
+   ============================================ */
+.mobile-bottom-nav {
+    display: none;
+    visibility: hidden;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--mobile-nav-height);
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 998;
+    padding-bottom: var(--safe-area-inset-bottom);
+}
+
+.mobile-bottom-nav-inner {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: var(--spacing-sm);
+    min-width: 64px;
+    min-height: var(--touch-target-min);
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    text-decoration: none;
+}
+
+.bottom-nav-item .nav-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.bottom-nav-item.active,
+.bottom-nav-item:hover {
+    color: var(--primary-color);
+}
+
+.bottom-nav-item.active .nav-icon {
+    transform: scale(1.1);
+}
+
+/* ============================================
+   شريط الأدوات العائم للمحرر
+   ============================================ */
+.mobile-editor-toolbar {
+    display: none;
+    visibility: hidden;
+    pointer-events: none;
+    position: fixed;
+    bottom: calc(var(--mobile-nav-height) + var(--spacing-md));
+    left: var(--spacing-md);
+    right: var(--spacing-md);
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    padding: var(--spacing-sm);
+    z-index: 997;
+    border: 1px solid var(--border-color);
+}
+
+.mobile-editor-toolbar.active {
+    display: flex;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.mobile-editor-toolbar-inner {
+    display: flex;
+    justify-content: space-around;
+    gap: var(--spacing-xs);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.mobile-editor-toolbar-inner::-webkit-scrollbar {
+    display: none;
+}
+
+.mobile-toolbar-btn {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border: none;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
+}
+
+.mobile-toolbar-btn:active {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(0.95);
+}
+
+/* ============================================
+   تحسينات الهيدر للموبايل
+   ============================================ */
+@media (max-width: 768px) {
+    /* إخفاء التنقل العادي وإظهار قائمة الهمبرغر */
+    .mobile-menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .header-nav {
+        display: none;
+    }
+    
+    .mobile-nav-overlay {
+        display: block;
+    }
+    
+    .mobile-sidebar {
+        display: block;
+    }
+    
+    .mobile-bottom-nav {
+        display: flex;
+        visibility: visible;
+    }
+    
+    /* تعديل الهيدر */
+    .app-header {
+        height: var(--mobile-header-height);
+        padding: 0 var(--spacing-md);
+    }
+    
+    .header-content {
+        flex-direction: row;
+        height: 100%;
+    }
+    
+    .logo {
+        flex: 1;
+    }
+    
+    .logo h1 {
+        font-size: 1.1rem;
+    }
+    
+    .theme-toggle {
+        position: static;
+        margin-left: var(--spacing-sm);
+    }
+    
+    /* تعديل المحتوى الرئيسي */
+    .app-main {
+        padding-top: var(--spacing-md);
+        padding-bottom: calc(var(--mobile-nav-height) + var(--spacing-xl) + var(--safe-area-inset-bottom));
+    }
+}
+
+/* ============================================
+   تحسينات الصفحة الرئيسية
+   ============================================ */
+@media (max-width: 768px) {
+    .hero-section {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: var(--spacing-xl);
+        padding: var(--spacing-lg) 0;
+    }
+    
+    .hero-content h2 {
+        font-size: 1.75rem;
+    }
+    
+    .hero-content p {
+        font-size: 1rem;
+    }
+    
+    .hero-buttons {
+        justify-content: center;
+    }
+    
+    .hero-image {
+        order: -1;
+    }
+    
+    .book-illustration {
+        width: 140px;
+        height: 196px;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .feature-card {
+        padding: var(--spacing-lg);
+    }
+}
+
+/* ============================================
+   تحسينات صفحة المكتبة
+   ============================================ */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-md);
+    }
+    
+    .page-header h2 {
+        font-size: 1.25rem;
+    }
+    
+    .page-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-sm);
+    }
+    
+    .page-actions button {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: 0.875rem;
+    }
+    
+    .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+    
+    .book-card {
+        padding: var(--spacing-sm);
+    }
+    
+    .book-card-cover {
+        height: 140px;
+    }
+    
+    .book-card-title {
+        font-size: 0.9rem;
+    }
+    
+    .book-card-author {
+        font-size: 0.75rem;
+    }
+    
+    .book-card-actions {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    .book-card-actions button {
+        width: 100%;
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.75rem;
+    }
+}
+
+/* ============================================
+   تحسينات محرر الكتاب
+   ============================================ */
+@media (max-width: 768px) {
+    .editor-section {
+        padding: var(--spacing-md);
+        border-radius: var(--radius-md);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .editor-section h3 {
+        font-size: 1rem;
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px; /* منع التكبير التلقائي على iOS */
+        min-height: var(--touch-target-min);
+    }
+    
+    /* محرر الغلاف */
+    .cover-editor-container {
+        flex-direction: column;
+    }
+    
+    .cover-editor {
+        width: 100%;
+        max-width: 280px;
+        height: 400px;
+        margin: 0 auto;
+    }
+    
+    .cover-controls {
+        width: 100%;
+    }
+    
+    .control-group {
+        padding: var(--spacing-md);
+    }
+    
+    .control-group-header {
+        padding: var(--spacing-sm) 0;
+    }
+    
+    /* أزرار التحكم بالحجم */
+    .size-control {
+        min-height: var(--touch-target-min);
+    }
+    
+    .size-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+}
+
+/* ============================================
+   تحسينات الفصول
+   ============================================ */
+@media (max-width: 768px) {
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-md);
+    }
+    
+    .header-actions {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-xs);
+    }
+    
+    .header-actions .primary-btn,
+    .header-actions .export-btn-sm {
+        padding: var(--spacing-sm);
+        font-size: 0.75rem;
+        min-height: var(--touch-target-min);
+    }
+    
+    .header-actions .btn-icon {
+        margin-left: 0;
+    }
+    
+    /* شريط التنقل السريع */
+    .chapters-quick-nav {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .quick-nav-header {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    .quick-nav-list {
+        max-height: 150px;
+    }
+    
+    .quick-nav-item {
+        padding: var(--spacing-sm) var(--spacing-md);
+        min-height: var(--touch-target-min);
+    }
+    
+    /* عناصر الفصل */
+    .chapter-item {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .chapter-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-sm);
+    }
+    
+    .chapter-drag-handle {
+        align-self: flex-start;
+        width: var(--touch-target-min);
+        height: var(--touch-target-min);
+    }
+    
+    .chapter-title-input {
+        order: 0;
+        width: 100%;
+        font-size: 16px;
+        min-height: var(--touch-target-min);
+    }
+    
+    .chapter-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--spacing-sm);
+    }
+    
+    .chapter-actions button {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* شريط أدوات التنسيق */
+    .editor-toolbar {
+        flex-wrap: wrap;
+        gap: var(--spacing-xs);
+        padding: var(--spacing-sm);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .toolbar-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+    
+    .toolbar-separator {
+        height: 24px;
+        margin: 0 var(--spacing-xs);
+    }
+    
+    /* محرر المحتوى */
+    .chapter-editor {
+        min-height: 200px;
+        font-size: 16px;
+        padding: var(--spacing-md);
+    }
+}
+
+/* ============================================
+   تحسينات إعدادات الفهرس
+   ============================================ */
+@media (max-width: 768px) {
+    .toc-settings-section .section-header {
+        flex-direction: row;
+    }
+    
+    .toc-settings-content {
+        padding: var(--spacing-sm);
+    }
+    
+    .toc-settings-content .form-row {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .toc-settings-content .size-control {
+        justify-content: space-between;
+    }
+}
+
+/* ============================================
+   تحسينات قسم التصدير
+   ============================================ */
+@media (max-width: 768px) {
+    .export-section {
+        padding: var(--spacing-md);
+    }
+    
+    .export-buttons {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+    
+    .export-btn {
+        padding: var(--spacing-md);
+        min-height: 56px;
+    }
+    
+    .export-btn .btn-icon {
+        font-size: 1.25rem;
+    }
+}
+
+/* ============================================
+   تحسينات النوافذ المنبثقة
+   ============================================ */
+@media (max-width: 768px) {
+    .modal-overlay {
+        padding: var(--spacing-md);
+        align-items: flex-end;
+    }
+    
+    .modal {
+        max-height: 90vh;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        margin-bottom: 0;
+    }
+    
+    .modal-header {
+        padding: var(--spacing-md);
+    }
+    
+    .modal-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .modal-body {
+        padding: var(--spacing-md);
+        max-height: 60vh;
+    }
+    
+    .modal-footer {
+        padding: var(--spacing-md);
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .modal-footer button {
+        width: 100%;
+        min-height: var(--touch-target-min);
+    }
+}
+
+/* ============================================
+   تحسينات الإعدادات
+   ============================================ */
+@media (max-width: 768px) {
+    .settings-section {
+        padding: var(--spacing-md);
+    }
+    
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-md) 0;
+    }
+    
+    .setting-item .toggle-switch {
+        align-self: flex-start;
+    }
+    
+    .setting-item select {
+        width: 100%;
+        min-height: var(--touch-target-min);
+        font-size: 16px;
+    }
+}
+
+/* ============================================
+   تحسينات الإشعارات
+   ============================================ */
+@media (max-width: 768px) {
+    .toast-container {
+        left: var(--spacing-md);
+        right: var(--spacing-md);
+        bottom: calc(var(--mobile-nav-height) + var(--spacing-md));
+    }
+    
+    .toast {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+/* ============================================
+   تحسينات شاشة التحميل
+   ============================================ */
+@media (max-width: 768px) {
+    .loading-content {
+        padding: var(--spacing-xl);
+    }
+    
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* ============================================
+   تحسينات خاصة بالشاشات الصغيرة جداً
+   ============================================ */
+@media (max-width: 380px) {
+    html {
+        font-size: 13px;
+    }
+    
+    .logo h1 {
+        font-size: 0.95rem;
+    }
+    
+    .mobile-bottom-nav-inner {
+        justify-content: space-between;
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .bottom-nav-item {
+        min-width: 56px;
+        padding: var(--spacing-xs);
+    }
+    
+    .bottom-nav-item .nav-icon {
+        font-size: 1.3rem;
+    }
+    
+    .bottom-nav-item span:last-child {
+        font-size: 0.65rem;
+    }
+    
+    .books-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .book-card {
+        display: flex;
+        flex-direction: row;
+        gap: var(--spacing-md);
+    }
+    
+    .book-card-cover {
+        width: 80px;
+        height: 120px;
+        flex-shrink: 0;
+    }
+    
+    .book-card-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    .book-card-actions {
+        flex-direction: row;
+    }
+    
+    .header-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .header-actions .primary-btn {
+        grid-column: 1 / -1;
+    }
+}
+
+/* ============================================
+   تحسينات الوضع الأفقي للموبايل
+   ============================================ */
+@media (max-width: 768px) and (orientation: landscape) {
+    .app-header {
+        height: 50px;
+    }
+    
+    .mobile-bottom-nav {
+        height: 50px;
+    }
+    
+    .app-main {
+        padding-bottom: calc(50px + var(--spacing-xl));
+    }
+    
+    .hero-section {
+        grid-template-columns: 1fr 1fr;
+        text-align: right;
+    }
+    
+    .hero-image {
+        order: 0;
+    }
+    
+    .modal {
+        max-height: 85vh;
+    }
+    
+    .modal-body {
+        max-height: 50vh;
+    }
+}
+
+/* ============================================
+   تحسينات اللمس والتفاعل
+   ============================================ */
+@media (hover: none) and (pointer: coarse) {
+    /* أهداف اللمس الكبيرة */
+    button,
+    .btn,
+    a.nav-btn,
+    .toggle-switch,
+    select,
+    input[type="checkbox"],
+    input[type="radio"] {
+        min-height: var(--touch-target-min);
+        min-width: var(--touch-target-min);
+    }
+    
+    /* إزالة تأثيرات hover على الأجهزة اللمسية */
+    button:hover,
+    .btn:hover,
+    .nav-btn:hover {
+        transform: none;
+    }
+    
+    /* تأثير الضغط */
+    button:active,
+    .btn:active,
+    .nav-btn:active {
+        transform: scale(0.97);
+        opacity: 0.9;
+    }
+    
+    /* تحسين التمرير */
+    .chapters-list,
+    .quick-nav-list,
+    .books-grid,
+    .modal-body {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+    
+    /* منع تحديد النص أثناء السحب */
+    .chapter-drag-handle,
+    .draggable-element {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+}
+
+/* ============================================
+   تحسينات محرر الغلاف للمس
+   ============================================ */
+.cover-editor .draggable-element {
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: grab;
+}
+
+.cover-editor .draggable-element:active,
+.cover-editor .draggable-element.dragging {
+    cursor: grabbing;
+    z-index: 100;
+    opacity: 0.9;
+}
+
+/* إخفاء رسالة الموبايل على الديسكتوب */
+.cover-editor-hint {
+    display: none;
+}
+
+/* مؤشر بصري للسحب على الموبايل */
+@media (max-width: 768px) {
+    .cover-editor-hint {
+        display: block;
+    }
+    
+    .cover-editor .draggable-element {
+        position: relative;
+    }
+    
+    .cover-editor .draggable-element::after {
+        content: '⋮⋮';
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        color: var(--primary-color);
+        background: var(--bg-primary);
+        padding: 2px 6px;
+        border-radius: 4px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .cover-editor .draggable-element:active::after,
+    .cover-editor .draggable-element.dragging::after {
+        opacity: 1;
+    }
+    
+    /* تكبير منطقة اللمس */
+    .cover-editor .draggable-element {
+        padding: 8px;
+        margin: -8px;
+    }
+    
+    /* رسالة توجيهية */
+    .cover-editor-hint {
+        display: block;
+        text-align: center;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        padding: var(--spacing-sm);
+        background: var(--bg-tertiary);
+        border-radius: var(--radius-sm);
+        margin-top: var(--spacing-sm);
+    }
+}
+
+/* ============================================
+   تحسينات الوضع الداكن للموبايل
+   ============================================ */
+[data-theme="dark"] .mobile-bottom-nav {
+    background: var(--bg-secondary);
+    border-top-color: var(--border-color);
+}
+
+[data-theme="dark"] .mobile-sidebar {
+    background: var(--bg-secondary);
+}
+
+[data-theme="dark"] .mobile-editor-toolbar {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+/* ============================================
+   تحسينات إمكانية الوصول
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* دعم تكبير النص */
+@media (min-resolution: 2dppx) {
+    .chapter-editor,
+    .form-group input,
+    .form-group textarea {
+        font-size: max(16px, 1rem);
+    }
+}
