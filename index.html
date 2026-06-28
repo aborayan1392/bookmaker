@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>صانع الكتب الإلكترونية – E-Book Maker</title>
+    
+    <!-- Google Fonts - Arabic & English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- خطوط عربية -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Changa:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- خطوط إنجليزية -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Responsive Stylesheet -->
+    <link rel="stylesheet" href="css/responsive.css">
+    
+    <!-- External Libraries -->
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- html2canvas for capturing HTML content (backup for images) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- JSZip for EPUB generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- FileSaver for downloading files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">📚</span>
+                <h1>صانع الكتب الإلكترونية</h1>
+            </div>
+            <nav class="header-nav">
+                <button class="nav-btn active" data-page="home">
+                    <span class="btn-icon">🏠</span>
+                    <span>الرئيسية</span>
+                </button>
+                <button class="nav-btn" data-page="create">
+                    <span class="btn-icon">✏️</span>
+                    <span>إنشاء كتاب</span>
+                </button>
+                <button class="nav-btn" data-page="my-books">
+                    <span class="btn-icon">📖</span>
+                    <span>كتبي</span>
+                </button>
+                <button class="nav-btn" data-page="settings">
+                    <span class="btn-icon">⚙️</span>
+                    <span>الإعدادات</span>
+                </button>
+            </nav>
+            <button class="theme-toggle" id="themeToggle" title="تبديل الوضع الليلي/النهاري">
+                <span class="theme-icon">🌙</span>
+            </button>
+            <!-- زر القائمة للموبايل -->
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="القائمة">
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
+        </div>
+    </header>
+
+    <!-- تراكب القائمة الجانبية -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+
+    <!-- القائمة الجانبية للموبايل -->
+    <aside class="mobile-sidebar" id="mobileSidebar">
+        <div class="mobile-sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">📚</span>
+                <h2 style="font-size: 1rem;">صانع الكتب</h2>
+            </div>
+            <button class="mobile-sidebar-close" id="mobileSidebarClose" aria-label="إغلاق">✕</button>
+        </div>
+        <nav class="mobile-sidebar-nav">
+            <a href="#" class="mobile-nav-item active" data-page="home">
+                <span class="nav-icon">🏠</span>
+                <span>الرئيسية</span>
+            </a>
+            <a href="#" class="mobile-nav-item" data-page="create">
+                <span class="nav-icon">✏️</span>
+                <span>إنشاء كتاب</span>
+            </a>
+            <a href="#" class="mobile-nav-item" data-page="my-books">
+                <span class="nav-icon">📖</span>
+                <span>كتبي</span>
+            </a>
+            <a href="#" class="mobile-nav-item" data-page="settings">
+                <span class="nav-icon">⚙️</span>
+                <span>الإعدادات</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- شريط التنقل السفلي للموبايل -->
+    <nav class="mobile-bottom-nav" id="mobileBottomNav">
+        <div class="mobile-bottom-nav-inner">
+            <button class="bottom-nav-item active" data-page="home">
+                <span class="nav-icon">🏠</span>
+                <span>الرئيسية</span>
+            </button>
+            <button class="bottom-nav-item" data-page="create">
+                <span class="nav-icon">✏️</span>
+                <span>إنشاء</span>
+            </button>
+            <button class="bottom-nav-item" data-page="my-books">
+                <span class="nav-icon">📖</span>
+                <span>كتبي</span>
+            </button>
+            <button class="bottom-nav-item" data-page="settings">
+                <span class="nav-icon">⚙️</span>
+                <span>إعدادات</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="app-main">
+        <!-- Home Page -->
+        <section class="page active" id="page-home">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h2>مرحباً بك في صانع الكتب الإلكترونية</h2>
+                    <p>أنشئ كتبك الإلكترونية بسهولة وصدّرها بصيغة PDF أو EPUB</p>
+                    <div class="hero-buttons">
+                        <button class="primary-btn large" onclick="navigateTo('create')">
+                            <span class="btn-icon">✨</span>
+                            إنشاء كتاب جديد
+                        </button>
+                        <button class="secondary-btn large" onclick="navigateTo('my-books')">
+                            <span class="btn-icon">📚</span>
+                            عرض كتبي
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="book-illustration">
+                        <div class="book-cover"></div>
+                        <div class="book-pages"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="features-section">
+                <h3>المميزات</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <span class="feature-icon">📝</span>
+                        <h4>محرر نصوص متقدم</h4>
+                        <p>أضف فصولاً وحرر المحتوى بسهولة مع دعم الصور</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">🖼️</span>
+                        <h4>دعم الصور</h4>
+                        <p>أضف صور الغلاف والصور داخل الفصول</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">📄</span>
+                        <h4>تصدير PDF</h4>
+                        <p>صدّر كتابك بصيغة PDF بجودة عالية</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">📱</span>
+                        <h4>تصدير EPUB</h4>
+                        <p>صدّر كتابك بصيغة EPUB للقراءة على الأجهزة المختلفة</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">💾</span>
+                        <h4>حفظ تلقائي</h4>
+                        <p>يتم حفظ كتبك تلقائياً في المتصفح</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">🌙</span>
+                        <h4>الوضع الليلي</h4>
+                        <p>اختر بين الوضع الليلي والنهاري</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Create Book Page -->
+        <section class="page" id="page-create">
+            <div class="page-header">
+                <h2>إنشاء كتاب جديد</h2>
+                <div class="page-actions">
+                    <button class="secondary-btn" onclick="previewBook()">
+                        <span class="btn-icon">👁️</span>
+                        معاينة
+                    </button>
+                    <button class="primary-btn" onclick="saveCurrentBook()">
+                        <span class="btn-icon">💾</span>
+                        حفظ
+                    </button>
+                </div>
+            </div>
+
+            <div class="book-editor">
+                <!-- Book Info Section -->
+                <div class="editor-section">
+                    <h3>معلومات الكتاب</h3>
+                    <div class="book-info-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bookTitle">عنوان الكتاب</label>
+                                <input type="text" id="bookTitle" placeholder="أدخل عنوان الكتاب" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="bookAuthor">اسم المؤلف</label>
+                                <input type="text" id="bookAuthor" placeholder="أدخل اسم المؤلف" class="form-input">
+                            </div>
+                        </div>
+                        
+                        <!-- محرر الغلاف التفاعلي -->
+                        <div class="form-group cover-editor-section">
+                            <label>تصميم الغلاف <span class="label-hint">(اسحب العناصر لتحريكها)</span></label>
+                            
+                            <div class="cover-editor-wrapper">
+                                <!-- معاينة الغلاف بمقاس A4 -->
+                                <div class="cover-editor" id="coverEditor">
+                                    <div class="cover-background" id="coverBackground">
+                                        <span class="placeholder-text" id="coverPlaceholder">انقر لاختيار صورة خلفية</span>
+                                        <img id="coverImage" src="" alt="خلفية الغلاف" style="display: none;">
+                                    </div>
+                                    
+                                    <!-- عنوان الكتاب - قابل للسحب -->
+                                    <div class="cover-element draggable-element" id="coverTitleElement" 
+                                         data-element="title" style="top: 35%; left: 50%; transform: translate(-50%, -50%);">
+                                        <span class="element-text" id="coverTitleText">عنوان الكتاب</span>
+                                    </div>
+                                    
+                                    <!-- اسم المؤلف - قابل للسحب -->
+                                    <div class="cover-element draggable-element" id="coverAuthorElement"
+                                         data-element="author" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                        <span class="element-text" id="coverAuthorText">اسم المؤلف</span>
+                                    </div>
+                                    
+                                    <!-- حاوية النصوص الإضافية -->
+                                    <div id="extraTextsContainer"></div>
+                                </div>
+                                
+                                <!-- رسالة توجيهية للموبايل -->
+                                <div class="cover-editor-hint">
+                                    👆 المس واسحب العناصر لتحريكها على الغلاف
+                                </div>
+                                
+                                <!-- أدوات تحرير الغلاف -->
+                                <div class="cover-tools">
+                                    <!-- خلفية الغلاف -->
+                                    <div class="cover-tool-group">
+                                        <label>خلفية الغلاف</label>
+                                        <input type="file" id="coverInput" accept="image/*" onchange="handleCoverUpload(event)" hidden>
+                                        <div class="tool-buttons">
+                                            <button class="tool-btn" onclick="document.getElementById('coverInput').click()" title="اختر صورة">
+                                                📁 صورة
+                                            </button>
+                                            <button class="tool-btn" onclick="removeCover()" id="removeCoverBtn" style="display: none;" title="حذف">
+                                                🗑️
+                                            </button>
+                                            <input type="color" id="coverBgColor" value="#6366f1" onchange="setCoverBgColor(this.value)" title="لون الخلفية">
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- العنوان -->
+                                    <div class="cover-tool-group">
+                                        <label>العنوان الرئيسي</label>
+                                        <select id="titleFont" onchange="setElementFont('title', this.value)" class="tool-select">
+                                            <optgroup label="خطوط عربية">
+                                                <option value="Cairo" selected>Cairo</option>
+                                                <option value="Tajawal">Tajawal</option>
+                                                <option value="Amiri">Amiri</option>
+                                                <option value="Almarai">Almarai</option>
+                                                <option value="Changa">Changa</option>
+                                                <option value="El Messiri">El Messiri</option>
+                                                <option value="Noto Kufi Arabic">Noto Kufi Arabic</option>
+                                                <option value="Noto Naskh Arabic">Noto Naskh Arabic</option>
+                                                <option value="Scheherazade New">Scheherazade New</option>
+                                            </optgroup>
+                                            <optgroup label="خطوط إنجليزية">
+                                                <option value="Playfair Display">Playfair Display</option>
+                                                <option value="Montserrat">Montserrat</option>
+                                                <option value="Poppins">Poppins</option>
+                                                <option value="Roboto">Roboto</option>
+                                                <option value="Lora">Lora</option>
+                                                <option value="Merriweather">Merriweather</option>
+                                                <option value="Oswald">Oswald</option>
+                                                <option value="Dancing Script">Dancing Script</option>
+                                                <option value="Pacifico">Pacifico</option>
+                                            </optgroup>
+                                        </select>
+                                        <div class="tool-row">
+                                            <button class="tool-btn size-btn" onclick="changeFontSize('title', -2)">−</button>
+                                            <span class="size-display" id="titleSizeDisplay">32px</span>
+                                            <button class="tool-btn size-btn" onclick="changeFontSize('title', 2)">+</button>
+                                            <input type="color" id="titleColor" value="#ffffff" onchange="setElementColor('title', this.value)">
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- اسم المؤلف -->
+                                    <div class="cover-tool-group">
+                                        <label>اسم المؤلف</label>
+                                        <select id="authorFont" onchange="setElementFont('author', this.value)" class="tool-select">
+                                            <optgroup label="خطوط عربية">
+                                                <option value="Cairo" selected>Cairo</option>
+                                                <option value="Tajawal">Tajawal</option>
+                                                <option value="Amiri">Amiri</option>
+                                                <option value="Almarai">Almarai</option>
+                                                <option value="Changa">Changa</option>
+                                                <option value="El Messiri">El Messiri</option>
+                                                <option value="Noto Kufi Arabic">Noto Kufi Arabic</option>
+                                            </optgroup>
+                                            <optgroup label="خطوط إنجليزية">
+                                                <option value="Roboto">Roboto</option>
+                                                <option value="Poppins">Poppins</option>
+                                                <option value="Montserrat">Montserrat</option>
+                                                <option value="Lora">Lora</option>
+                                            </optgroup>
+                                        </select>
+                                        <div class="tool-row">
+                                            <button class="tool-btn size-btn" onclick="changeFontSize('author', -2)">−</button>
+                                            <span class="size-display" id="authorSizeDisplay">18px</span>
+                                            <button class="tool-btn size-btn" onclick="changeFontSize('author', 2)">+</button>
+                                            <input type="color" id="authorColor" value="#e2e8f0" onchange="setElementColor('author', this.value)">
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- نصوص إضافية -->
+                                    <div class="cover-tool-group">
+                                        <label>نصوص إضافية</label>
+                                        <div class="extra-text-input">
+                                            <input type="text" id="newExtraText" placeholder="أدخل نص جديد..." class="tool-input">
+                                            <button class="tool-btn primary" onclick="addExtraText()">+ إضافة</button>
+                                        </div>
+                                        <div id="extraTextsList" class="extra-texts-list"></div>
+                                    </div>
+                                    
+                                    <!-- أدوات إضافية -->
+                                    <div class="cover-tool-group">
+                                        <label>أدوات</label>
+                                        <div class="tool-buttons">
+                                            <button class="tool-btn" onclick="resetCoverPositions()">🔄 إعادة تعيين</button>
+                                            <button class="tool-btn" onclick="centerAllElements()">⬛ توسيط الكل</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chapters Section -->
+                <div class="editor-section">
+                    <div class="section-header">
+                        <h3>الفصول</h3>
+                        <div class="header-actions">
+                            <button class="primary-btn" onclick="addChapter()">
+                                <span class="btn-icon">➕</span>
+                                إضافة فصل
+                            </button>
+                            <button class="export-btn-sm pdf" onclick="exportToPDF()" title="تصدير PDF">
+                                <span class="btn-icon">📄</span>
+                                PDF
+                            </button>
+                            <button class="export-btn-sm epub" onclick="exportToEPUB()" title="تصدير EPUB">
+                                <span class="btn-icon">📱</span>
+                                EPUB
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- شريط التنقل السريع للفصول -->
+                    <div class="chapters-quick-nav" id="chaptersQuickNav">
+                        <div class="quick-nav-header">
+                            <span class="quick-nav-icon">📑</span>
+                            <span>انتقال سريع</span>
+                            <button class="quick-nav-toggle" onclick="toggleQuickNav()" title="طي/توسيع">▼</button>
+                        </div>
+                        <div class="quick-nav-list" id="quickNavList">
+                            <div class="quick-nav-empty">لا توجد فصول بعد</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chapters-list" id="chaptersList">
+                        <!-- Chapters will be added here dynamically -->
+                    </div>
+                </div>
+
+                <!-- Table of Contents Settings -->
+                <div class="editor-section toc-settings-section">
+                    <div class="section-header">
+                        <h3>📑 إعدادات الفهرس</h3>
+                        <label class="toggle-switch small">
+                            <input type="checkbox" id="tocEnabled" checked onchange="toggleTocSettings()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="toc-settings-content" id="tocSettingsContent">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tocTitle">عنوان الفهرس</label>
+                                <input type="text" id="tocTitle" value="فهرس المحتويات" class="form-input" placeholder="فهرس المحتويات">
+                            </div>
+                            <div class="form-group">
+                                <label for="tocStyle">نمط العرض</label>
+                                <select id="tocStyle" class="form-input">
+                                    <option value="dots">نقاط متصلة ........</option>
+                                    <option value="line">خط متصل ────</option>
+                                    <option value="none">بدون خط</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tocTitleFont">خط العنوان</label>
+                                <select id="tocTitleFont" class="form-input">
+                                    <optgroup label="خطوط عربية">
+                                        <option value="Cairo" selected>Cairo</option>
+                                        <option value="Tajawal">Tajawal</option>
+                                        <option value="Amiri">Amiri</option>
+                                        <option value="Almarai">Almarai</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tocTitleColor">لون العنوان</label>
+                                <input type="color" id="tocTitleColor" value="#1e293b" class="form-input color-input">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tocNumberStyle">نمط الترقيم</label>
+                                <select id="tocNumberStyle" class="form-input">
+                                    <option value="arabic">أرقام عربية (1، 2، 3)</option>
+                                    <option value="arabic-indic">أرقام هندية (١، ٢، ٣)</option>
+                                    <option value="roman">أرقام رومانية (I، II، III)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tocChapterColor">لون رقم الفصل</label>
+                                <input type="color" id="tocChapterColor" value="#6366f1" class="form-input color-input">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tocListFont">خط قائمة الفهرس</label>
+                                <select id="tocListFont" class="form-input">
+                                    <optgroup label="خطوط عربية">
+                                        <option value="Cairo" selected>Cairo</option>
+                                        <option value="Tajawal">Tajawal</option>
+                                        <option value="Amiri">Amiri</option>
+                                        <option value="Almarai">Almarai</option>
+                                        <option value="Noto Kufi Arabic">Noto Kufi Arabic</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tocListFontSize">حجم خط القائمة</label>
+                                <div class="size-control">
+                                    <button type="button" class="size-btn" onclick="changeTocListSize(-1)">−</button>
+                                    <span id="tocListSizeDisplay">13pt</span>
+                                    <button type="button" class="size-btn" onclick="changeTocListSize(1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Section -->
+                <div class="editor-section export-section">
+                    <h3>تصدير الكتاب</h3>
+                    <div class="export-buttons">
+                        <button class="export-btn add-chapter" onclick="addChapter()">
+                            <span class="btn-icon">➕</span>
+                            <span>إضافة فصل</span>
+                        </button>
+                        <button class="export-btn pdf" onclick="exportToPDF()">
+                            <span class="btn-icon">📄</span>
+                            <span>تصدير PDF</span>
+                        </button>
+                        <button class="export-btn epub" onclick="exportToEPUB()">
+                            <span class="btn-icon">📱</span>
+                            <span>تصدير EPUB</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- My Books Page -->
+        <section class="page" id="page-my-books">
+            <div class="page-header">
+                <h2>كتبي</h2>
+                <button class="primary-btn" onclick="navigateTo('create'); resetBookEditor();">
+                    <span class="btn-icon">➕</span>
+                    كتاب جديد
+                </button>
+            </div>
+
+            <div class="books-grid" id="booksGrid">
+                <!-- Books will be loaded here dynamically -->
+            </div>
+
+            <div class="empty-state" id="emptyBooksState" style="display: none;">
+                <span class="empty-icon">📚</span>
+                <h3>لا توجد كتب بعد</h3>
+                <p>ابدأ بإنشاء كتابك الأول</p>
+                <button class="primary-btn" onclick="navigateTo('create')">
+                    <span class="btn-icon">✨</span>
+                    إنشاء كتاب جديد
+                </button>
+            </div>
+        </section>
+
+        <!-- Settings Page -->
+        <section class="page" id="page-settings">
+            <div class="page-header">
+                <h2>الإعدادات</h2>
+            </div>
+
+            <div class="settings-content">
+                <div class="settings-section">
+                    <h3>المظهر</h3>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <span class="setting-icon">🌙</span>
+                            <div>
+                                <h4>الوضع الليلي</h4>
+                                <p>تفعيل الوضع الليلي للحصول على تجربة مريحة للعين</p>
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>البيانات</h3>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <span class="setting-icon">📊</span>
+                            <div>
+                                <h4>إحصائيات التخزين</h4>
+                                <p>عدد الكتب المحفوظة: <span id="booksCount">0</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <span class="setting-icon">🗑️</span>
+                            <div>
+                                <h4>حذف جميع البيانات</h4>
+                                <p>سيتم حذف جميع الكتب المحفوظة نهائياً</p>
+                            </div>
+                        </div>
+                        <button class="danger-btn" onclick="clearAllData()">
+                            حذف الكل
+                        </button>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <span class="setting-icon">📥</span>
+                            <div>
+                                <h4>تصدير البيانات</h4>
+                                <p>تصدير جميع الكتب كملف JSON</p>
+                            </div>
+                        </div>
+                        <button class="secondary-btn" onclick="exportAllData()">
+                            تصدير
+                        </button>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <span class="setting-icon">📤</span>
+                            <div>
+                                <h4>استيراد البيانات</h4>
+                                <p>استيراد كتب من ملف JSON</p>
+                            </div>
+                        </div>
+                        <input type="file" id="importDataInput" accept=".json" onchange="importData(event)" hidden>
+                        <button class="secondary-btn" onclick="document.getElementById('importDataInput').click()">
+                            استيراد
+                        </button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>حول التطبيق</h3>
+                    <div class="about-app">
+                        <p><strong>صانع الكتب الإلكترونية</strong> - الإصدار 1.0</p>
+                        <p>تطبيق ويب لإنشاء الكتب الإلكترونية بصيغتي PDF و EPUB</p>
+                        <p>تم التطوير باستخدام HTML، CSS و JavaScript</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Preview Modal -->
+    <div class="modal" id="previewModal">
+        <div class="modal-content preview-modal-content">
+            <div class="modal-header">
+                <h3>معاينة الكتاب</h3>
+                <button class="close-btn" onclick="closePreviewModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="preview-container" id="previewContainer">
+                    <!-- Preview content will be generated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="secondary-btn" onclick="closePreviewModal()">إغلاق</button>
+                <button class="export-btn pdf" onclick="exportToPDF()">
+                    <span class="btn-icon">📄</span>
+                    تصدير PDF
+                </button>
+                <button class="export-btn epub" onclick="exportToEPUB()">
+                    <span class="btn-icon">📱</span>
+                    تصدير EPUB
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon"></span>
+        <span class="toast-message"></span>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p>جاري التحميل...</p>
+    </div>
+
+    <!-- Chapter Template (Hidden) -->
+    <template id="chapterTemplate">
+        <div class="chapter-item" draggable="true">
+            <div class="chapter-header">
+                <div class="drag-handle" title="اسحب لإعادة الترتيب">⋮⋮</div>
+                <input type="text" class="chapter-title-input" placeholder="عنوان الفصل">
+                <div class="chapter-actions">
+                    <button class="icon-btn" onclick="toggleChapterContent(this)" title="طي/توسيع">
+                        <span>▼</span>
+                    </button>
+                    <button class="icon-btn danger" onclick="deleteChapter(this)" title="حذف الفصل">
+                        <span>🗑️</span>
+                    </button>
+                </div>
+            </div>
+            <div class="chapter-content">
+                <div class="text-editor-toolbar">
+                    <!-- أدوات التنسيق الأساسية -->
+                    <div class="toolbar-group">
+                        <button type="button" onclick="formatText('bold')" title="غامق (Ctrl+B)" class="toolbar-btn">
+                            <strong>B</strong>
+                        </button>
+                        <button type="button" onclick="formatText('italic')" title="مائل (Ctrl+I)" class="toolbar-btn">
+                            <em>I</em>
+                        </button>
+                        <button type="button" onclick="formatText('underline')" title="تسطير (Ctrl+U)" class="toolbar-btn">
+                            <u>U</u>
+                        </button>
+                        <button type="button" onclick="formatText('strikeThrough')" title="يتوسطه خط" class="toolbar-btn">
+                            <s>S</s>
+                        </button>
+                    </div>
+                    
+                    <span class="toolbar-separator"></span>
+                    
+                    <!-- حجم الخط -->
+                    <div class="toolbar-group">
+                        <select onchange="formatFontSize(this.value)" title="حجم الخط" class="toolbar-select">
+                            <option value="">الحجم</option>
+                            <option value="1">صغير جداً</option>
+                            <option value="2">صغير</option>
+                            <option value="3">عادي</option>
+                            <option value="4">متوسط</option>
+                            <option value="5">كبير</option>
+                            <option value="6">كبير جداً</option>
+                            <option value="7">ضخم</option>
+                        </select>
+                        
+                        <!-- نوع الخط -->
+                        <select onchange="formatFontName(this.value)" title="نوع الخط" class="toolbar-select chapter-font-select">
+                            <optgroup label="خطوط عربية">
+                                <option value="Cairo">Cairo - القاهرة</option>
+                                <option value="Tajawal">Tajawal - تجول</option>
+                                <option value="Amiri">Amiri - أميري</option>
+                                <option value="Almarai">Almarai - المراعي</option>
+                                <option value="Changa">Changa - تشانجا</option>
+                                <option value="El Messiri">El Messiri - المسيري</option>
+                                <option value="Noto Kufi Arabic">Noto Kufi - كوفي</option>
+                                <option value="Noto Naskh Arabic">Noto Naskh - نسخ</option>
+                                <option value="Scheherazade New">Scheherazade - شهرزاد</option>
+                                <option value="Lateef">Lateef - لطيف</option>
+                            </optgroup>
+                            <optgroup label="خطوط إنجليزية">
+                                <option value="Playfair Display">Playfair Display</option>
+                                <option value="Montserrat">Montserrat</option>
+                                <option value="Poppins">Poppins</option>
+                                <option value="Roboto">Roboto</option>
+                                <option value="Lora">Lora</option>
+                                <option value="Merriweather">Merriweather</option>
+                                <option value="Oswald">Oswald</option>
+                                <option value="Dancing Script">Dancing Script</option>
+                                <option value="Pacifico">Pacifico</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <span class="toolbar-separator"></span>
+                    
+                    <!-- لون النص والخلفية -->
+                    <div class="toolbar-group">
+                        <label class="color-picker-wrapper" title="لون النص">
+                            <span class="color-icon">A</span>
+                            <input type="color" value="#000000" onchange="formatTextColor(this.value)" class="color-picker">
+                        </label>
+                        <label class="color-picker-wrapper" title="لون التظليل">
+                            <span class="color-icon highlight">◼</span>
+                            <input type="color" value="#ffff00" onchange="formatHighlight(this.value)" class="color-picker">
+                        </label>
+                    </div>
+                    
+                    <span class="toolbar-separator"></span>
+                    
+                    <!-- المحاذاة -->
+                    <div class="toolbar-group">
+                        <button type="button" onclick="formatText('justifyRight')" title="محاذاة لليمين" class="toolbar-btn">
+                            <span style="font-size: 12px;">☰▶</span>
+                        </button>
+                        <button type="button" onclick="formatText('justifyCenter')" title="توسيط" class="toolbar-btn">
+                            <span style="font-size: 12px;">☰</span>
+                        </button>
+                        <button type="button" onclick="formatText('justifyLeft')" title="محاذاة لليسار" class="toolbar-btn">
+                            <span style="font-size: 12px;">◀☰</span>
+                        </button>
+                        <button type="button" onclick="formatText('justifyFull')" title="ضبط" class="toolbar-btn">
+                            <span style="font-size: 12px;">≡</span>
+                        </button>
+                    </div>
+                    
+                    <span class="toolbar-separator"></span>
+                    
+                    <!-- القوائم والمسافات -->
+                    <div class="toolbar-group">
+                        <button type="button" onclick="formatText('insertUnorderedList')" title="قائمة نقطية" class="toolbar-btn">•</button>
+                        <button type="button" onclick="formatText('insertOrderedList')" title="قائمة مرقمة" class="toolbar-btn">1.</button>
+                        <button type="button" onclick="formatText('indent')" title="زيادة المسافة البادئة" class="toolbar-btn">→</button>
+                        <button type="button" onclick="formatText('outdent')" title="تقليل المسافة البادئة" class="toolbar-btn">←</button>
+                    </div>
+                    
+                    <span class="toolbar-separator"></span>
+                    
+                    <!-- العناوين والاقتباس -->
+                    <div class="toolbar-group">
+                        <select onchange="formatHeading(this.value)" title="نوع العنصر" class="toolbar-select">
+                            <option value="">العنوان</option>
+                            <option value="h1">عنوان رئيسي</option>
+                            <option value="h2">عنوان فرعي</option>
+                            <option value="h3">عنوان ثالث</option>
+                            <option value="p">فقرة عادية</option>
+                            <option value="blockquote">اقتباس</option>
+                        </select>
+                    </div>
+                    
+                    <span class="toolbar-separator"></span>
+                    
+                    <!-- الروابط والصور -->
+                    <div class="toolbar-group">
+                        <button type="button" onclick="insertLink(this)" title="إدراج رابط" class="toolbar-btn">🔗</button>
+                        <button type="button" onclick="insertChapterImage(this)" title="إدراج صورة" class="toolbar-btn">🖼️</button>
+                        <button type="button" onclick="insertHorizontalRule()" title="خط فاصل" class="toolbar-btn">—</button>
+                    </div>
+                    
+                    <span class="toolbar-separator"></span>
+                    
+                    <!-- التراجع والإعادة -->
+                    <div class="toolbar-group">
+                        <button type="button" onclick="formatText('undo')" title="تراجع (Ctrl+Z)" class="toolbar-btn">↶</button>
+                        <button type="button" onclick="formatText('redo')" title="إعادة (Ctrl+Y)" class="toolbar-btn">↷</button>
+                        <button type="button" onclick="formatText('removeFormat')" title="إزالة التنسيق" class="toolbar-btn">✕</button>
+                    </div>
+                </div>
+                <div class="chapter-editor" contenteditable="true" placeholder="اكتب محتوى الفصل هنا..."></div>
+                <input type="file" class="chapter-image-input" accept="image/*" onchange="handleChapterImageUpload(event, this)" hidden>
+            </div>
+        </div>
+    </template>
+
+    <!-- Scripts -->
+    <script src="js/storage.js"></script>
+    <script src="js/pdf-generator.js"></script>
+    <script src="js/epub-generator.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
