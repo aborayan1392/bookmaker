@@ -1,0 +1,21 @@
+-                val categoryId = db.rawQuery("SELECT id FROM categories WHERE name=? LIMIT 1", arrayOf(article.category)).use { cursor ->
+-                    if (cursor.moveToFirst()) cursor.getLong(0) else null
+-                }
+-                db.insertOrThrow("articles", null, ContentValues().apply {
+-                    put("title", article.title)
+-                    put("body", article.body.trim())
+-                    if (categoryId == null) putNull("category_id") else put("category_id", categoryId)
+-                    put("keywords", article.keywords)
+-                    put("source_url", "")
+-                    put("is_favorite", 0)
+-                    put("created_at", now - index)
+-                    put("updated_at", now - index)
+-                })
++                values.put("is_favorite", 0)
++                values.put("created_at", now - index)
++                db.insertOrThrow("articles", null, values)
++            } else if (refreshExisting) {
++                db.update("articles", values, "title=?", arrayOf(article.title))
+             }
+         }
+     }
