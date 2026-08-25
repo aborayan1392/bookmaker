@@ -1,0 +1,186 @@
+--- a/app/src/main/java/com/aboryan/sportsencyclopedia/MainActivity.kt
++++ b/app/src/main/java/com/aboryan/sportsencyclopedia/MainActivity.kt
+@@ -108,16 +108,19 @@
+         }
+         shell.addView(drawerScrim, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+ 
+-        val drawerWidth = minOf(dp(360), (resources.displayMetrics.widthPixels * 0.88f).toInt())
++        val drawerWidth = minOf(dp(320), (resources.displayMetrics.widthPixels * 0.84f).toInt())
+         sideDrawer = LinearLayout(this).apply {
+             orientation = LinearLayout.VERTICAL
+             layoutDirection = View.LAYOUT_DIRECTION_RTL
+-            setPadding(dp(18), dp(22), dp(18), dp(22))
++            setPadding(dp(16), dp(18), dp(16), dp(18))
+             background = drawerBackground()
+             elevation = dp(28).toFloat()
+             translationX = drawerWidth.toFloat()
+         }
+-        shell.addView(sideDrawer, FrameLayout.LayoutParams(drawerWidth, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.END))
++        shell.addView(sideDrawer, FrameLayout.LayoutParams(drawerWidth, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.RIGHT))
++        sideDrawer.post {
++            if (!drawerOpen) sideDrawer.translationX = sideDrawer.width.toFloat()
++        }
+ 
+         // عنصر وهمي يحافظ على منطق الرجوع في شاشتي التحرير والقراءة دون شريط سفلي.
+         bottomNav = LinearLayout(this)
+@@ -127,7 +130,7 @@
+     private fun buildHeader(): View = LinearLayout(this).apply {
+         orientation = LinearLayout.HORIZONTAL
+         gravity = Gravity.CENTER_VERTICAL
+-        setPadding(dp(14), dp(9), dp(16), dp(9))
++        setPadding(dp(12), dp(8), dp(14), dp(8))
+         background = gradient(DARK_GREEN, GREEN, 0f)
+         elevation = dp(7).toFloat()
+ 
+@@ -139,7 +142,7 @@
+             setTextColor(Color.WHITE)
+             background = rounded("#20FFFFFF", dp(15).toFloat(), "#30FFFFFF")
+             setOnClickListener { openDrawer() }
+-        }, LinearLayout.LayoutParams(dp(48), dp(48)).apply { marginEnd = dp(12) })
++        }, LinearLayout.LayoutParams(dp(46), dp(46)).apply { marginEnd = dp(10) })
+ 
+         addView(LinearLayout(context).apply {
+             orientation = LinearLayout.VERTICAL
+@@ -149,14 +152,14 @@
+                 textSize = 19f
+                 setTextColor(Color.WHITE)
+                 setTypeface(typeface, Typeface.BOLD)
+-                gravity = Gravity.END
++                gravity = Gravity.RIGHT
+                 maxLines = 1
+             })
+             addView(TextView(context).apply {
+                 text = "مرجع رياضي منظم وسهل التصفح"
+                 textSize = 11.5f
+                 setTextColor(Color.parseColor("#CFE7E1"))
+-                gravity = Gravity.END
++                gravity = Gravity.RIGHT
+                 maxLines = 1
+             }, margin(top = 1))
+         }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+@@ -214,12 +217,12 @@
+                 gravity = Gravity.CENTER_VERTICAL
+                 isClickable = true
+                 isFocusable = true
+-                setPadding(dp(12), dp(8), dp(12), dp(8))
++                setPadding(dp(10), dp(6), dp(10), dp(6))
+                 background = rounded(if (selected) "#2BE1AB3D" else "#00000000", dp(16).toFloat(), if (selected) "#4DE1AB3D" else null)
+                 addView(TextView(context).apply {
+                     text = icon; textSize = 22f; gravity = Gravity.CENTER
+                     setTextColor(Color.parseColor(if (selected) "#FFE0A0" else "#D4ECE6"))
+-                }, LinearLayout.LayoutParams(dp(42), dp(42)))
++                }, LinearLayout.LayoutParams(dp(40), dp(40)))
+                 addView(TextView(context).apply {
+                     text = label; textSize = 15.5f; gravity = Gravity.CENTER_VERTICAL
+                     setTypeface(typeface, Typeface.BOLD)
+@@ -260,7 +263,14 @@
+         }
+         drawerScrim.animate().alpha(0f).setDuration(160).withEndAction { drawerScrim.visibility = View.GONE }.start()
+         sideDrawer.animate().cancel()
+-        sideDrawer.animate().translationX(width.toFloat()).setDuration(220).setInterpolator(DecelerateInterpolator()).start()
++        sideDrawer.animate()
++            .translationX(width.toFloat())
++            .setDuration(220)
++            .setInterpolator(DecelerateInterpolator())
++            .withEndAction {
++                if (!drawerOpen) sideDrawer.translationX = sideDrawer.width.toFloat()
++            }
++            .start()
+     }
+ 
+     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+@@ -323,7 +333,7 @@
+             hint = "ابحث في الموسوعة…"
+             textSize = 15f
+             setSingleLine(true)
+-            gravity = Gravity.END or Gravity.CENTER_VERTICAL
++            gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
+             setPadding(dp(16), 0, dp(16), 0)
+             background = rounded(SURFACE, dp(16).toFloat(), BORDER)
+         }
+@@ -449,7 +459,7 @@
+             hint = "بحث داخل الموضوعات…"
+             setSingleLine(true)
+             textSize = 15f
+-            gravity = Gravity.END or Gravity.CENTER_VERTICAL
++            gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
+             setPadding(dp(15), 0, dp(15), 0)
+             background = rounded(SURFACE, dp(16).toFloat(), BORDER)
+         }
+@@ -502,6 +512,8 @@
+             setTypeface(typeface, Typeface.BOLD)
+             setTextColor(Color.parseColor(TEXT))
+             maxLines = 2
++            gravity = Gravity.RIGHT
++            textDirection = View.TEXT_DIRECTION_RTL
+             setLineSpacing(dp(1).toFloat(), 1.02f)
+         }, margin(top = 10))
+ 
+@@ -510,6 +522,8 @@
+             textSize = 13.5f
+             setTextColor(Color.parseColor(MUTED))
+             maxLines = 3
++            gravity = Gravity.RIGHT
++            textDirection = View.TEXT_DIRECTION_RTL
+             setLineSpacing(dp(2).toFloat(), 1.05f)
+         }, margin(top = 5))
+ 
+@@ -745,7 +759,7 @@
+             setTextColor(Color.parseColor(TEXT))
+             setLineSpacing(dp(6).toFloat(), 1.12f)
+             setTextIsSelectable(true)
+-            gravity = Gravity.END
++            gravity = Gravity.RIGHT
+             textDirection = View.TEXT_DIRECTION_RTL
+         })
+         wrap.addView(articleCard)
+@@ -815,7 +829,7 @@
+                     }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+                 })
+                 addView(LinearLayout(context).apply {
+-                    orientation = LinearLayout.HORIZONTAL; gravity = Gravity.END
++                    orientation = LinearLayout.HORIZONTAL; gravity = Gravity.RIGHT
+                     addView(smallButton("تعديل", false) { categoryDialog(category) }, LinearLayout.LayoutParams(0, dp(38), 1f).apply { marginEnd = dp(7) })
+                     addView(smallButton("حذف", true) {
+                         AlertDialog.Builder(this@MainActivity).setTitle("حذف القسم؟").setMessage("ستنتقل موضوعاته إلى غير مصنف ولن تُحذف.")
+@@ -914,12 +928,18 @@
+             textSize = 22f
+             setTypeface(typeface, Typeface.BOLD)
+             setTextColor(Color.parseColor(TEXT))
++            gravity = Gravity.RIGHT
++            textDirection = View.TEXT_DIRECTION_RTL
++            maxLines = 2
+         })
+         addView(TextView(context).apply {
+             text = subtitle
+             textSize = 12.5f
+             setTextColor(Color.parseColor(MUTED))
+             setLineSpacing(dp(1).toFloat(), 1.02f)
++            gravity = Gravity.RIGHT
++            textDirection = View.TEXT_DIRECTION_RTL
++            maxLines = 2
+         }, margin(top = 2))
+     }
+ 
+@@ -1031,7 +1051,7 @@
+     private fun field(hintText: String, multiline: Boolean): EditText = EditText(this).apply {
+         hint = hintText
+         textSize = if (multiline) 16.5f else 14.5f
+-        gravity = if (multiline) Gravity.TOP or Gravity.END else Gravity.CENTER_VERTICAL or Gravity.END
++        gravity = if (multiline) Gravity.TOP or Gravity.RIGHT else Gravity.CENTER_VERTICAL or Gravity.RIGHT
+         textDirection = View.TEXT_DIRECTION_RTL
+         setPadding(dp(14), dp(10), dp(14), dp(10))
+         background = rounded("#FAFCFB", dp(14).toFloat(), BORDER)
+--- a/app/build.gradle
++++ b/app/build.gradle
+@@ -11,8 +11,8 @@
+         applicationId 'com.aboryan.sportsencyclopedia'
+         minSdk 26
+         targetSdk 35
+-        versionCode 5
+-        versionName '1.3.0'
++        versionCode 6
++        versionName '1.3.1'
+     }
+ 
+     buildTypes {
