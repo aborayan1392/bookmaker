@@ -1,0 +1,38 @@
+name: Recover Sports Encyclopedia v1.4.0 Source
+
+on:
+  push:
+    branches:
+      - temp-sports-encyclopedia-v140-source
+
+permissions:
+  contents: read
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reconstruct and patch source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p work/source dist
+          cat sports-apk-build/chunk*.txt > work/project.b64
+          base64 -d work/project.b64 > work/project.zip
+          unzip -q work/project.zip -d work/source
+          ROOT="$GITHUB_WORKSPACE/work/source/sportsbuild"
+          cd "$ROOT"
+          patch -p1 < "$GITHUB_WORKSPACE/sports-apk-build/mobile-v131.patch"
+          cat "$GITHUB_WORKSPACE"/sports-apk-build/v140safe/chunk*.patch > "$GITHUB_WORKSPACE/work/v140.patch"
+          patch -p1 < "$GITHUB_WORKSPACE/work/v140.patch"
+          grep -q "versionName '1.4.0'" app/build.gradle
+          grep -q "DB_VERSION = 3" app/src/main/java/com/aboryan/sportsencyclopedia/SportsDatabase.kt
+          cd "$GITHUB_WORKSPACE/work/source"
+          zip -qr "$GITHUB_WORKSPACE/dist/Sports-Encyclopedia-v1.4.0-source.zip" sportsbuild
+      - name: Upload source
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sports-Encyclopedia-v1.4.0-source
+          path: dist/Sports-Encyclopedia-v1.4.0-source.zip
+          retention-days: 2
