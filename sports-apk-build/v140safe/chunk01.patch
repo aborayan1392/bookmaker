@@ -1,0 +1,130 @@
+         wrap.addView(list)
+         search.onTextChanged { fill() }
+@@ -480,6 +470,67 @@
+         return scroll
+     }
+ 
++    private fun titleListRow(article: Article): View = LinearLayout(this).apply {
++        orientation = LinearLayout.HORIZONTAL
++        gravity = Gravity.CENTER_VERTICAL
++        setPadding(dp(14), dp(11), dp(14), dp(11))
++        background = rounded(SURFACE, dp(15).toFloat(), BORDER)
++        elevation = dp(1).toFloat()
++        addView(TextView(context).apply {
++            text = article.title
++            textSize = 16f
++            setTypeface(typeface, Typeface.BOLD)
++            setTextColor(Color.parseColor(TEXT))
++            gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
++            textDirection = View.TEXT_DIRECTION_RTL
++            maxLines = 2
++        }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
++        if (article.favorite) addView(TextView(context).apply {
++            text = "★"
++            textSize = 17f
++            setTextColor(Color.parseColor(GOLD))
++            gravity = Gravity.CENTER
++        }, LinearLayout.LayoutParams(dp(30), dp(34)).apply { marginStart = dp(6) })
++        addView(TextView(context).apply {
++            text = "‹"
++            textSize = 25f
++            setTextColor(Color.parseColor(GREEN))
++            gravity = Gravity.CENTER
++        }, LinearLayout.LayoutParams(dp(28), dp(36)).apply { marginStart = dp(3) })
++        setOnClickListener { showArticle(article.id) }
++    }
++
++    private fun articleBodySections(body: String): View = LinearLayout(this).apply {
++        orientation = LinearLayout.VERTICAL
++        val chunks = body.trim().split(Regex("\\n\\s*\\n")).map { it.trim() }.filter { it.isNotBlank() }
++        val defaultTitles = listOf("نبذة", "أهم المعلومات", "المهارات والقواعد", "الفوائد والسلامة", "معلومات إضافية")
++        chunks.forEachIndexed { index, raw ->
++            val lines = raw.lines()
++            val explicitHeading = lines.firstOrNull()?.trim()?.takeIf { it.startsWith("## ") }?.removePrefix("## ")?.trim()
++            val paragraph = if (explicitHeading != null) lines.drop(1).joinToString("\n").trim() else raw
++            val heading = explicitHeading ?: defaultTitles.getOrElse(index) { "معلومات إضافية" }
++            if (paragraph.isBlank()) return@forEachIndexed
++            if (index > 0) addView(View(context).apply { setBackgroundColor(Color.parseColor("#EEF2F0")) }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(1)).apply { topMargin = dp(14); bottomMargin = dp(13) })
++            addView(TextView(context).apply {
++                text = heading
++                textSize = 16f
++                setTypeface(typeface, Typeface.BOLD)
++                setTextColor(Color.parseColor(GREEN))
++                gravity = Gravity.RIGHT
++                textDirection = View.TEXT_DIRECTION_RTL
++            })
++            addView(TextView(context).apply {
++                text = paragraph
++                textSize = 17f
++                setTextColor(Color.parseColor(TEXT))
++                setLineSpacing(dp(5).toFloat(), 1.13f)
++                setTextIsSelectable(true)
++                gravity = Gravity.RIGHT
++                textDirection = View.TEXT_DIRECTION_RTL
++            }, margin(top = 7))
++        }
++    }
++
+     private fun articleCard(article: Article): View = LinearLayout(this).apply {
+         orientation = LinearLayout.VERTICAL
+         setPadding(dp(16), dp(15), dp(16), dp(14))
+@@ -753,15 +804,7 @@
+         else articleCard.addView(Space(this), LinearLayout.LayoutParams(1, dp(10)))
+ 
+         articleCard.addView(View(this).apply { setBackgroundColor(Color.parseColor("#EEF2F0")) }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(1)).apply { bottomMargin = dp(14) })
+-        articleCard.addView(TextView(this).apply {
+-            text = article.body
+-            textSize = 17.5f
+-            setTextColor(Color.parseColor(TEXT))
+-            setLineSpacing(dp(6).toFloat(), 1.12f)
+-            setTextIsSelectable(true)
+-            gravity = Gravity.RIGHT
+-            textDirection = View.TEXT_DIRECTION_RTL
+-        })
++        articleCard.addView(articleBodySections(article.body))
+         wrap.addView(articleCard)
+ 
+         if (article.sourceUrl.isNotBlank()) wrap.addView(secondaryButton("فتح المصدر الأصلي") {
+diff -ruN '--exclude=build' '--exclude=.gradle' sports_mobile_fix/SportsEncyclopedia/app/src/main/java/com/aboryan/sportsencyclopedia/SeedContent.kt sports_v140/SportsEncyclopedia/app/src/main/java/com/aboryan/sportsencyclopedia/SeedContent.kt
+--- sports_mobile_fix/SportsEncyclopedia/app/src/main/java/com/aboryan/sportsencyclopedia/SeedContent.kt	2026-08-25 16:12:53.000000000 +0000
++++ sports_v140/SportsEncyclopedia/app/src/main/java/com/aboryan/sportsencyclopedia/SeedContent.kt	2026-08-25 19:24:05.412635147 +0000
+@@ -4,7 +4,8 @@
+     val title: String,
+     val category: String,
+     val keywords: String,
+-    val body: String
++    val body: String,
++    val sourceUrl: String = "https://ketabonline.com/ar/books/26351"
+ )
+ 
+ object SeedContent {
+@@ -344,6 +345,455 @@
+ يستعد الحكم بمراجعة القوانين وفحص الملعب والتجهيزات والتواصل مع مساعديه. وبعد المباراة قد يوثق الأحداث والمخالفات في تقرير رسمي.
+ 
+ يمكن للطالب تعلم التحكيم في مباريات مصغرة، فهذا يعمق فهمه للقوانين ويعلمه تحمل المسؤولية والعدل، بشرط أن يتلقى الدعم وألا يتعرض للإساءة من المشاركين."""
++        ),
++        SeedArticle(
++            "كرة الشبكة", "الألعاب الجماعية", "كرة الشبكة، نتبول، تمرير، سلة",
++            """كرة الشبكة لعبة جماعية تعتمد على تمرير الكرة ومحاولة تسجيلها في حلقة مرتفعة، وتتشابه في بعض ملامحها مع كرة السلة مع اختلاف واضح في الحركة والمراكز والقواعد.
++
++يتوزع اللاعبون على مراكز ذات مناطق حركة محددة، ويعتمد اللعب على الاستلام والتمرير السريع والتمركز بدل الجري الطويل بالكرة.
++
++تطوّر اللعبة الدقة والتوافق والعمل الجماعي، ويجب الاهتمام بمساحة اللعب الآمنة وتعليم التوقف والدوران بصورة سليمة."""
++        ),
++        SeedArticle(
++            "كرة القاعدة", "الألعاب الجماعية", "كرة القاعدة، بيسبول، مضرب، قواعد",
++            """كرة القاعدة رياضة جماعية يتناوب فيها فريقان بين الضرب والدفاع، ويحاول الفريق المهاجم تسجيل الأشواط بالمرور على قواعد الملعب بعد ضرب الكرة.
++
++تتطلب اللعبة مهارات الرمي والالتقاط والضرب بالمضرب والجري بين القواعد، ويعتمد الدفاع على تنظيم المواقع وسرعة نقل الكرة.
++
++تحتاج الممارسة إلى مساحة واضحة وخوذ ومعدات مناسبة، مع منع الوقوف في مسار المضرب أو الكرة أثناء التدريب."""
++        ),
++        SeedArticle(
++            "الكرة اللينة", "الألعاب الجماعية", "الكرة اللينة، سوفتبول، مضرب، قواعد",
++            """الكرة اللينة رياضة قريبة من كرة القاعدة، لكنها تستخدم عادة كرة أكبر وملعبًا أصغر وبعض القواعد المختلفة، وتوجد لها صور تنافسية وترفيهية.
++
++يتناوب الفريقان بين الضرب والدفاع، ويعتمد الأداء على الرمي والالتقاط وضرب الكرة والجري بين القواعد.
++
++سهولة تعديل المسافات والمعدات تجعلها مناسبة للتعليم، مع ضرورة استخدام خوذات وتحديد مناطق آمنة للضرب والرمي."""
++        ),
++        SeedArticle(
