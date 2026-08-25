@@ -1,0 +1,132 @@
+name: Sports Encyclopedia v1.5.0 APK
+run-name: Sports Encyclopedia v1.5.0 APK
+
+on:
+  push:
+    branches:
+      - temp-sports-encyclopedia-v150-apk
+    paths:
+      - 'sports-v150/**'
+      - '.github/workflows/temp-sports-encyclopedia-v150.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Reconstruct and verify source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p work/source dist diagnostics
+          cat sports-v150/u*.txt > work/source.b64
+          test "$(wc -c < work/source.b64)" = "94304"
+          echo "438ea21a846307ded51238889caa7f88982d9c351815711fb1ffcc2fdb724893  work/source.b64" | sha256sum -c -
+          base64 -d work/source.b64 > work/source.zip
+          echo "48f5015f4f7535aa9baf73f0324c902e09eb95ea8fd7993ae354c52673c1de8f  work/source.zip" | sha256sum -c -
+          unzip -t work/source.zip >/dev/null
+          unzip -q work/source.zip -d work/source
+          ROOT="$GITHUB_WORKSPACE/work/source/sportsbuild"
+          echo "PROJECT_ROOT=$ROOT" >> "$GITHUB_ENV"
+          test -f "$ROOT/app/build.gradle"
+          grep -q "versionCode 8" "$ROOT/app/build.gradle"
+          grep -q "versionName '1.5.0'" "$ROOT/app/build.gradle"
+          grep -q 'null, 4)' "$ROOT/app/src/main/java/com/aboryan/sportsencyclopedia/SportsDatabase.kt"
+          grep -q 'JUSTIFICATION_MODE_INTER_WORD' "$ROOT/app/src/main/java/com/aboryan/sportsencyclopedia/MainActivity.kt"
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          root = Path('work/source/sportsbuild/app/src/main/java/com/aboryan/sportsencyclopedia')
+          seed = (root/'SeedContent.kt').read_text(encoding='utf-8')
+          titles = re.findall(r'SeedArticle\(\s*\n?\s*"([^"]+)"', seed)
+          assert len(titles) == 217, len(titles)
+          assert len(set(titles)) == 217, 'duplicate sports titles found'
+          db = (root/'SportsDatabase.kt').read_text(encoding='utf-8')
+          assert 'oldVersion < 4' in db
+          print('Verified 217 unique sports topics and DB migration v4')
+          PY
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
+
+      - name: Restore Cairo font
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$PROJECT_ROOT/app/src/main/res/font"
+          curl -fL --retry 3 -o "$PROJECT_ROOT/app/src/main/res/font/cairo.ttf" "https://raw.githubusercontent.com/google/fonts/main/ofl/cairo/Cairo%5Bslnt%2Cwght%5D.ttf"
+          test "$(wc -c < "$PROJECT_ROOT/app/src/main/res/font/cairo.ttf")" -gt 100000
+          grep -q '@font/cairo' "$PROJECT_ROOT/app/src/main/res/values/styles.xml"
+
+      - name: Set up Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Build debug APK
+        shell: bash
+        run: |
+          set -o pipefail
+          cd "$PROJECT_ROOT"
+          gradle --no-daemon --console=plain --stacktrace :app:assembleDebug 2>&1 | tee "$GITHUB_WORKSPACE/diagnostics/gradle-build.log"
+
+      - name: Verify and prepare APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="$PROJECT_ROOT/app/build/outputs/apk/debug/app-debug.apk"
+          test -s "$APK"
+          unzip -t "$APK" >/dev/null
+          BT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}/build-tools/35.0.0"
+          "$BT/apksigner" verify --verbose --print-certs "$APK" | tee dist/Sports-Encyclopedia-v1.5.0-SIGNING.txt
+          "$BT/zipalign" -c -p 4 "$APK"
+          "$BT/aapt" dump badging "$APK" | tee dist/Sports-Encyclopedia-v1.5.0-BADGING.txt
+          grep -q "package: name='com.aboryan.sportsencyclopedia'" dist/Sports-Encyclopedia-v1.5.0-BADGING.txt
+          grep -q "versionCode='8'" dist/Sports-Encyclopedia-v1.5.0-BADGING.txt
+          grep -q "versionName='1.5.0'" dist/Sports-Encyclopedia-v1.5.0-BADGING.txt
+          cp "$APK" dist/Sports-Encyclopedia-v1.5.0.apk
+          sha256sum dist/Sports-Encyclopedia-v1.5.0.apk | tee dist/Sports-Encyclopedia-v1.5.0-SHA256.txt
+          ls -lh dist/Sports-Encyclopedia-v1.5.0.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sports-Encyclopedia-v1.5.0
+          path: |
+            dist/Sports-Encyclopedia-v1.5.0.apk
+            dist/Sports-Encyclopedia-v1.5.0-SIGNING.txt
+            dist/Sports-Encyclopedia-v1.5.0-BADGING.txt
+            dist/Sports-Encyclopedia-v1.5.0-SHA256.txt
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload diagnostics
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sports-Encyclopedia-v1.5.0-log
+          path: diagnostics/*
+          if-no-files-found: warn
+          retention-days: 7
