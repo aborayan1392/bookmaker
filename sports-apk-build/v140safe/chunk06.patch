@@ -1,0 +1,112 @@
++تتطلب المهارة الصعود والنزول الآمن والتحكم بالاتجاه وفهم توازن القارب والتعامل مع الرياح والتيار.
++
++سترة النجاة وفحص القارب ومعرفة الطقس والابتعاد عن المياه غير المناسبة للمستوى أساسيات ثابتة."""
++        ),
++        SeedArticle(
++            "الإبحار الشراعي", "الرياضات المائية", "إبحار، شراع، رياح، قارب",
++            """الإبحار الشراعي رياضة تستخدم قوة الرياح لتحريك القارب عبر ضبط الأشرعة والدفة واتجاه المسار.
++
++يحتاج الممارس إلى فهم اتجاه الرياح وتغيير الشراع والانعطاف والعمل المنظم بين أفراد الطاقم.
++
++يجب ارتداء سترات النجاة وفحص الأحوال الجوية والمعدات ومعرفة إجراءات الطوارئ قبل الإبحار."""
++        ),
++        SeedArticle(
++            "صيد الأسماك الرياضي", "الألعاب الفردية", "صيد الأسماك، قصبة، رياضة، ماء",
++            """صيد الأسماك الرياضي نشاط ترفيهي وتنافسي يعتمد على استخدام قصبة وخيط وطعم أو طُعم صناعي وفق أنظمة المكان.
++
++تشمل المهارات اختيار المعدات والرمي والتحكم بالخيط والتعامل السليم مع السمكة والبيئة المحيطة.
++
++يجب الالتزام بتصاريح ومواسم وحدود الصيد وحماية الأنواع والبيئة، واستخدام وسائل السلامة قرب الماء."""
++        ),
++        SeedArticle(
++            "الخماسي الحديث", "الألعاب الأولمبية", "خماسي حديث، أولمبياد، سباحة، جري",
++            """الخماسي الحديث رياضة متعددة التخصصات صُممت لاختبار مجموعة متنوعة من القدرات في منافسة مركبة.
++
++يتطلب الرياضي التدريب على مهارات مختلفة وإدارة الجهد والانتقال الذهني والبدني بين أجزاء المنافسة.
++
++تتغير صيغة بعض مسابقاته بمرور الزمن، لذلك تُراجع اللوائح الرسمية لمعرفة التخصصات والترتيب الحاليين."""
++        ),
++        SeedArticle(
++            "العشاري", "الألعاب الأولمبية", "عشاري، ألعاب القوى، عشر مسابقات، نقاط",
++            """العشاري مسابقة مركبة في ألعاب القوى تجمع عشر مسابقات من الجري والوثب والرمي وتُحتسب النتيجة بنظام نقاط.
++
++يحتاج المتسابق إلى مستوى متوازن في السرعة والقوة والتحمل والتقنية بدل التخصص في مهارة واحدة فقط.
++
++يُوزع التدريب بعناية لتجنب الحمل الزائد لأن تعدد التخصصات يزيد متطلبات الاستشفاء والتنظيم."""
++        ),
++        SeedArticle(
++            "السباعي", "الألعاب الأولمبية", "سباعي، ألعاب القوى، سبع مسابقات، نقاط",
++            """السباعي مسابقة مركبة تجمع سبع فعاليات في ألعاب القوى وتحوّل نتائج كل فعالية إلى نقاط ضمن مجموع نهائي.
++
++يتطلب النجاح تنوعًا في الجري والوثب والرمي وإدارة الجهد على عدة منافسات متتابعة.
++
++يحتاج التدريب إلى توازن بين التقنية واللياقة وفترات الراحة لأن كثرة المهارات قد تزيد مخاطر الإجهاد إذا لم تُنظم."""
++        ),
++        SeedArticle(
++            "البولينج", "الألعاب الفردية", "بولينج، كرة، قوارير، ممر",
++            """البولينج رياضة دقة يدحرج فيها اللاعب كرة على ممر بهدف إسقاط مجموعة من القوارير وتسجيل أكبر عدد من النقاط.
++
++يعتمد الأداء على الاقتراب المتزن وإطلاق الكرة في خط مناسب والتحكم بسرعة الكرة ودورانها.
++
++يجب اختيار كرة مناسبة للوزن واستخدام حذاء الممر والحذر من عبور خط الرمي أو الوقوف في مسار لاعب آخر."""
++        ),
++        SeedArticle(
++            "البلياردو", "الألعاب الفردية", "بلياردو، طاولة، عصا، كرات",
++            """البلياردو اسم لمجموعة ألعاب طاولة تستخدم عصا لضرب الكرات وفق قواعد تختلف بين الأنواع.
++
++تعتمد المهارة على الدقة وتقدير الزوايا وقوة الضربة والتخطيط لعدة نقلات متتالية.
++
++يُراعى استخدام العصا بطريقة آمنة وعدم الاتكاء الخطر على الطاولة والمحافظة على مساحة حركة كافية حول اللاعبين."""
++        ),
++        SeedArticle(
++            "الشطرنج", "الألعاب الفردية", "شطرنج، رقعة، استراتيجية، قطع",
++            """الشطرنج لعبة استراتيجية ذهنية يتنافس فيها لاعبان على رقعة من 64 مربعًا، ولكل قطعة نمط حركة محدد.
++
++يركز اللعب على التخطيط وحساب الاحتمالات والسيطرة على المساحات وحماية الملك، وتنتهي المباراة بطرق متعددة وفق القواعد.
++
++تفيد اللعبة في التدريب على الصبر والتركيز واتخاذ القرار، ويمكن تنظيمها بسهولة في النشاط المدرسي مع ضبط الزمن ونظام البطولة."""
+         )
++
+     )
+ }
+diff -ruN '--exclude=build' '--exclude=.gradle' sports_mobile_fix/SportsEncyclopedia/app/src/main/java/com/aboryan/sportsencyclopedia/SportsDatabase.kt sports_v140/SportsEncyclopedia/app/src/main/java/com/aboryan/sportsencyclopedia/SportsDatabase.kt
+--- sports_mobile_fix/SportsEncyclopedia/app/src/main/java/com/aboryan/sportsencyclopedia/SportsDatabase.kt	2026-08-25 16:13:05.000000000 +0000
++++ sports_v140/SportsEncyclopedia/app/src/main/java/com/aboryan/sportsencyclopedia/SportsDatabase.kt	2026-08-25 19:24:17.941470178 +0000
+@@ -10,7 +10,7 @@
+ import java.io.File
+ 
+ class SportsDatabase(private val context: Context) :
+-    SQLiteOpenHelper(context, "sports_encyclopedia.db", null, 2) {
++    SQLiteOpenHelper(context, "sports_encyclopedia.db", null, 3) {
+ 
+     override fun onConfigure(db: SQLiteDatabase) {
+         super.onConfigure(db)
+@@ -60,6 +60,7 @@
+ 
+     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+         if (oldVersion < 2) seedArticles(db)
++        if (oldVersion < 3) seedArticles(db, refreshExisting = true)
+     }
+ 
+     private fun seed(db: SQLiteDatabase) {
+@@ -83,24 +84,27 @@
+         }
+     }
+ 
+-    private fun seedArticles(db: SQLiteDatabase) {
++    private fun seedArticles(db: SQLiteDatabase, refreshExisting: Boolean = false) {
+         val now = System.currentTimeMillis()
+         SeedContent.articles.forEachIndexed { index, article ->
++            val categoryId = db.rawQuery("SELECT id FROM categories WHERE name=? LIMIT 1", arrayOf(article.category)).use { cursor ->
++                if (cursor.moveToFirst()) cursor.getLong(0) else null
++            }
+             val exists = db.rawQuery("SELECT 1 FROM articles WHERE title=? LIMIT 1", arrayOf(article.title)).use { it.moveToFirst() }
++            val values = ContentValues().apply {
++                put("title", article.title)
++                put("body", article.body.trim())
++                if (categoryId == null) putNull("category_id") else put("category_id", categoryId)
++                put("keywords", article.keywords)
++                put("source_url", article.sourceUrl)
++                put("updated_at", now - index)
++            }
+             if (!exists) {
