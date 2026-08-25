@@ -1,0 +1,152 @@
+diff -ruN '--exclude=build' '--exclude=.gradle' sports_mobile_fix/SportsEncyclopedia/app/build.gradle sports_v140/SportsEncyclopedia/app/build.gradle
+--- sports_mobile_fix/SportsEncyclopedia/app/build.gradle	2026-08-25 19:02:41.810209998 +0000
++++ sports_v140/SportsEncyclopedia/app/build.gradle	2026-08-25 19:20:49.383393020 +0000
+@@ -11,8 +11,8 @@
+         applicationId 'com.aboryan.sportsencyclopedia'
+         minSdk 26
+         targetSdk 35
+-        versionCode 6
+-        versionName '1.3.1'
++        versionCode 7
++        versionName '1.4.0'
+     }
+ 
+     buildTypes {
+diff -ruN '--exclude=build' '--exclude=.gradle' sports_mobile_fix/SportsEncyclopedia/app/src/main/java/com/aboryan/sportsencyclopedia/MainActivity.kt sports_v140/SportsEncyclopedia/app/src/main/java/com/aboryan/sportsencyclopedia/MainActivity.kt
+--- sports_mobile_fix/SportsEncyclopedia/app/src/main/java/com/aboryan/sportsencyclopedia/MainActivity.kt	2026-08-25 19:02:41.809816937 +0000
++++ sports_v140/SportsEncyclopedia/app/src/main/java/com/aboryan/sportsencyclopedia/MainActivity.kt	2026-08-25 19:21:36.985765647 +0000
+@@ -300,81 +300,71 @@
+         }
+         val outer = LinearLayout(this).apply {
+             orientation = LinearLayout.VERTICAL
+-            setPadding(dp(16), dp(16), dp(16), dp(28))
++            setPadding(dp(14), dp(14), dp(14), dp(28))
+         }
+ 
+-        outer.addView(LinearLayout(this).apply {
+-            orientation = LinearLayout.VERTICAL
+-            setPadding(dp(20), dp(18), dp(20), dp(18))
+-            background = gradient(GREEN, DARK_GREEN, dp(22).toFloat())
+-            elevation = dp(3).toFloat()
+-            addView(TextView(context).apply {
+-                text = "كل الرياضة في مكان واحد"
+-                textSize = 22f
+-                setTypeface(typeface, Typeface.BOLD)
+-                setTextColor(Color.WHITE)
+-            })
+-            addView(TextView(context).apply {
+-                text = "ابحث في الموضوعات والقوانين والرياضات ثم احفظ ما يهمك أو شاركه مباشرة."
+-                textSize = 13f
+-                setTextColor(Color.parseColor("#D9ECE7"))
+-                setLineSpacing(dp(2).toFloat(), 1.05f)
+-            }, margin(top = 4))
+-            addView(LinearLayout(context).apply {
+-                orientation = LinearLayout.HORIZONTAL
+-                gravity = Gravity.CENTER_VERTICAL
+-                addView(homeStat("${db.articleCount()}", "موضوع"), LinearLayout.LayoutParams(0, dp(58), 1f).apply { marginEnd = dp(7) })
+-                addView(homeStat("${db.categories().size}", "قسم"), LinearLayout.LayoutParams(0, dp(58), 1f))
+-            }, margin(top = 14))
+-        }, margin(bottom = 14))
++        outer.addView(screenHeading("الموسوعة الرياضية", "قائمة العناوين الرياضية"), margin(bottom = 12))
+ 
+-        outer.addView(sectionTitle("البحث", "اكتب كلمة أو عنوانًا"), margin(bottom = 8))
+         val search = EditText(this).apply {
+-            hint = "ابحث في الموسوعة…"
++            hint = "ابحث عن عنوان رياضي…"
+             textSize = 15f
+             setSingleLine(true)
+             gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
+-            setPadding(dp(16), 0, dp(16), 0)
+-            background = rounded(SURFACE, dp(16).toFloat(), BORDER)
+-        }
+-        outer.addView(search, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(54)))
+-
+-        val categories = db.categories()
+-        outer.addView(sectionTitle("القسم", "تصفية حسب الرياضة"), margin(top = 17, bottom = 8))
+-        val categorySpinner = Spinner(this).apply {
+-            background = rounded(SURFACE, dp(16).toFloat(), BORDER)
+-            setPadding(dp(13), 0, dp(13), 0)
+-            adapter = ArrayAdapter(
+-                this@MainActivity,
+-                android.R.layout.simple_spinner_dropdown_item,
+-                listOf("جميع الأقسام") + categories.map { "${it.icon}  ${it.name}" }
+-            )
++            textDirection = View.TEXT_DIRECTION_RTL
++            setPadding(dp(15), 0, dp(15), 0)
++            background = rounded(SURFACE, dp(15).toFloat(), BORDER)
+         }
+-        outer.addView(categorySpinner, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(54)))
++        outer.addView(search, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(52)).apply { bottomMargin = dp(14) })
+ 
+-        var selectedCategory: Long? = null
+         val listBox = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+-        val resultTitle = sectionTitle("أحدث الموضوعات", "${db.articleCount()} موضوع")
+-        outer.addView(resultTitle, margin(top = 20, bottom = 10))
+         outer.addView(listBox)
+ 
++        fun addCategoryHeader(name: String, count: Int) {
++            listBox.addView(LinearLayout(this).apply {
++                orientation = LinearLayout.HORIZONTAL
++                gravity = Gravity.CENTER_VERTICAL
++                setPadding(dp(4), dp(12), dp(4), dp(8))
++                addView(TextView(context).apply {
++                    text = name
++                    textSize = 16f
++                    setTypeface(typeface, Typeface.BOLD)
++                    setTextColor(Color.parseColor(GREEN))
++                    gravity = Gravity.RIGHT
++                    textDirection = View.TEXT_DIRECTION_RTL
++                }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
++                addView(TextView(context).apply {
++                    text = count.toString()
++                    textSize = 11.5f
++                    setTextColor(Color.parseColor(MUTED))
++                    gravity = Gravity.CENTER
++                    setPadding(dp(9), dp(3), dp(9), dp(3))
++                    background = rounded("#EEF4F2", dp(11).toFloat())
++                })
++            })
++        }
++
+         fun fillArticles() {
+             listBox.removeAllViews()
+-            val data = db.articles(search.text.toString(), selectedCategory)
++            val query = search.text.toString().trim()
++            val data = db.articles(query).sortedBy { it.title }
+             if (data.isEmpty()) {
+-                listBox.addView(emptyState("لا توجد نتائج", "جرّب كلمة بحث أخرى أو اختر قسمًا مختلفًا."))
++                listBox.addView(emptyState("لا توجد نتائج", "جرّب كتابة عنوان آخر."))
++                return
++            }
++            if (query.isNotBlank()) {
++                data.forEach { listBox.addView(titleListRow(it), margin(bottom = 7)) }
+             } else {
+-                data.forEach { listBox.addView(articleCard(it), margin(bottom = 11)) }
++                data.groupBy { it.categoryName.ifBlank { "غير مصنف" } }
++                    .toSortedMap()
++                    .forEach { (category, articles) ->
++                        addCategoryHeader(category, articles.size)
++                        articles.sortedBy { it.title }.forEach { article ->
++                            listBox.addView(titleListRow(article), margin(bottom = 7))
++                        }
++                    }
+             }
+         }
+ 
+-        categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+-                selectedCategory = if (position == 0) null else categories[position - 1].id
+-                fillArticles()
+-            }
+-            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+-        }
+         search.onTextChanged { fillArticles() }
+         fillArticles()
+         scroll.addView(outer)
+@@ -471,7 +461,7 @@
+             val data = db.articles(search.text.toString(), categoryId, favoritesOnly)
+             if (data.isEmpty()) {
+                 list.addView(emptyState(if (favoritesOnly) "المفضلة فارغة" else "لا توجد موضوعات", if (favoritesOnly) "أضف أي موضوع إلى المفضلة وسيظهر هنا." else "ستظهر الموضوعات هنا بعد إضافتها."))
+-            } else data.forEach { list.addView(articleCard(it), margin(bottom = 11)) }
++            } else data.sortedBy { it.title }.forEach { list.addView(titleListRow(it), margin(bottom = 7)) }
+         }
