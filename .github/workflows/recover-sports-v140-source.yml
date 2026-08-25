@@ -25,7 +25,7 @@ jobs:
           cd "$ROOT"
           patch -p1 < "$GITHUB_WORKSPACE/sports-apk-build/mobile-v131.patch"
           cat "$GITHUB_WORKSPACE"/sports-apk-build/v140safe/chunk*.patch > "$GITHUB_WORKSPACE/work/v140.patch"
-          patch -p1 < "$GITHUB_WORKSPACE/work/v140.patch"
+          patch -p2 < "$GITHUB_WORKSPACE/work/v140.patch"
           grep -q "versionName '1.4.0'" app/build.gradle
           grep -q "DB_VERSION = 3" app/src/main/java/com/aboryan/sportsencyclopedia/SportsDatabase.kt
           cd "$GITHUB_WORKSPACE/work/source"
