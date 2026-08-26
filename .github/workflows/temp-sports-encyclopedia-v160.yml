@@ -84,6 +84,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
+          grep -q '^android.useAndroidX=true$' "$PROJECT_ROOT/gradle.properties" || echo 'android.useAndroidX=true' >> "$PROJECT_ROOT/gradle.properties"
           cd "$PROJECT_ROOT"
           gradle --no-daemon --console=plain --stacktrace :app:assembleDebug 2>&1 | tee "$GITHUB_WORKSPACE/diagnostics/gradle-build.log"
 
