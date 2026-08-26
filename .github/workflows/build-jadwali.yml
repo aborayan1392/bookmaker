@@ -1,0 +1,46 @@
+name: Build Jadwali Java APK
+
+on:
+  push:
+    branches:
+      - jadwali-java-v1.0.0
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle 8.7
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Restore source bundle
+        shell: bash
+        run: |
+          cat jadwali-build/jadwali-source.b64.part* | base64 --ignore-garbage --decode > JadwaliJava-v1.0.0-source.zip
+          echo "f529b83ad858191d4c596220ada56667befe3d4082612d14db36ee26a066d5f7  JadwaliJava-v1.0.0-source.zip" | sha256sum -c -
+          unzip -q JadwaliJava-v1.0.0-source.zip
+
+      - name: Build debug APK
+        working-directory: JadwaliJava-v1.0.0
+        run: gradle --no-daemon clean assembleDebug
+
+      - name: Prepare APK
+        run: cp JadwaliJava-v1.0.0/app/build/outputs/apk/debug/app-debug.apk Jadwali-v1.0.0-debug.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Jadwali-v1.0.0-debug-apk
+          path: Jadwali-v1.0.0-debug.apk
+          if-no-files-found: error
