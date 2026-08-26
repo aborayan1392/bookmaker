@@ -78,6 +78,7 @@ jobs:
           mkdir -p "$PROJECT_ROOT/app/src/main/res/font"
           curl -fL --retry 3 -o "$PROJECT_ROOT/app/src/main/res/font/cairo.ttf" "https://raw.githubusercontent.com/google/fonts/main/ofl/cairo/Cairo%5Bslnt%2Cwght%5D.ttf"
           test "$(wc -c < "$PROJECT_ROOT/app/src/main/res/font/cairo.ttf")" -gt 100000
+          sed -i 's#<item name="android:fontFamily">sans-serif</item>#<item name="android:fontFamily">@font/cairo</item>#g' "$PROJECT_ROOT/app/src/main/res/values/styles.xml"
           grep -q '@font/cairo' "$PROJECT_ROOT/app/src/main/res/values/styles.xml"
 
       - name: Set up Gradle 8.9
