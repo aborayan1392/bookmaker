@@ -42,14 +42,18 @@ jobs:
             'platforms;android-36' \
             'build-tools;36.0.0'
 
-      - name: Restore source
+      - name: Restore exact source
         shell: bash
         run: |
           set -euo pipefail
           rm -rf /tmp/apkforge-java-pro
           mkdir -p /tmp/apkforge-java-pro
-          base64 -d apkforge-java-pro/source.zip.b64 > /tmp/apkforge-java-pro/source.zip
+          cat apkforge-java-pro/source-parts/part_* > /tmp/apkforge-java-pro/source.b64
+          test "$(wc -c < /tmp/apkforge-java-pro/source.b64)" = 64264
+          echo '0927d4aa68b096688913d621c441ba10fd64631571ddfc9a3cbb415f5e291b5a  /tmp/apkforge-java-pro/source.b64' | sha256sum -c -
+          base64 -d /tmp/apkforge-java-pro/source.b64 > /tmp/apkforge-java-pro/source.zip
           echo '67dca287a5fee4f005c3ae6ba1fa384de4cb19a2283edb44a9da6312bf4bd4da  /tmp/apkforge-java-pro/source.zip' | sha256sum -c -
+          unzip -t /tmp/apkforge-java-pro/source.zip >/dev/null
           unzip -q /tmp/apkforge-java-pro/source.zip -d /tmp/apkforge-java-pro
           test -f /tmp/apkforge-java-pro/APKForge-Java-Pro/app/build.gradle
 
@@ -67,6 +71,7 @@ jobs:
           APK=/tmp/apkforge-java-pro/APKForge-Java-Pro/app/build/outputs/apk/debug/app-debug.apk
           test -s "$APK"
           unzip -t "$APK" >/dev/null
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose "$APK"
           cp "$APK" "$GITHUB_WORKSPACE/APKForge-Java-Pro-v1.0.0.apk"
           sha256sum "$GITHUB_WORKSPACE/APKForge-Java-Pro-v1.0.0.apk" | tee "$GITHUB_WORKSPACE/APKForge-Java-Pro-v1.0.0-SHA256.txt"
 
